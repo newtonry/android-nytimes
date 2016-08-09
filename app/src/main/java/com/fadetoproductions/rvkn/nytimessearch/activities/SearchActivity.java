@@ -1,15 +1,19 @@
-package com.fadetoproductions.rvkn.nytimessearch;
+package com.fadetoproductions.rvkn.nytimessearch.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 
+import com.fadetoproductions.rvkn.nytimessearch.R;
+import com.fadetoproductions.rvkn.nytimessearch.adapters.ArticleArrayAdapter;
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -30,6 +34,9 @@ public class SearchActivity extends AppCompatActivity {
     Button btnSearch;
 
     ArrayList<Article> articles;
+    ArticleArrayAdapter articleArrayAdapter;
+
+
 
 //    https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=e844336f8dca4d5e934d0cab5ff9cc89&q=android
 
@@ -48,6 +55,20 @@ public class SearchActivity extends AppCompatActivity {
         gvResults = (GridView) findViewById(R.id.gvResults);
         btnSearch = (Button) findViewById(R.id.btnSearch);
         articles = new ArrayList<>();
+        articleArrayAdapter = new ArticleArrayAdapter(this, articles);
+        gvResults.setAdapter(articleArrayAdapter);
+
+        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), ArticleActivity.class);
+                Article article = articles.get(position);
+                intent.putExtra("article", article);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -91,6 +112,9 @@ public class SearchActivity extends AppCompatActivity {
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(articleJsonResults));
+
+
+                    articleArrayAdapter.addAll(Article.fromJsonArray(articleJsonResults));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
