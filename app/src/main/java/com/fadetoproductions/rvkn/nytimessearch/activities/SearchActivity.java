@@ -1,5 +1,6 @@
 package com.fadetoproductions.rvkn.nytimessearch.activities;
 
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -15,6 +16,7 @@ import android.widget.GridView;
 
 import com.fadetoproductions.rvkn.nytimessearch.R;
 import com.fadetoproductions.rvkn.nytimessearch.adapters.ArticleArrayAdapter;
+import com.fadetoproductions.rvkn.nytimessearch.fragments.SettingsFragment;
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
 import com.fadetoproductions.rvkn.nytimessearch.utils.Reachability;
 import com.loopj.android.http.AsyncHttpClient;
@@ -99,6 +101,16 @@ public class SearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+//            MovieActivity context = (MovieActivity) getContext();
+//            DetailsFragment detailsFragment = DetailsFragment.newInstance(movie);
+//            FragmentManager fm = context.getSupportFragmentManager();
+//            detailsFragment.show(fm, "details_fragment");
+
+            SettingsFragment settingsFragment = new SettingsFragment();
+            FragmentManager fm = getSupportFragmentManager();
+            settingsFragment.show(fm, "settings_fragment");
+
+
             return true;
         }
 
