@@ -16,6 +16,7 @@ import android.widget.GridView;
 import com.fadetoproductions.rvkn.nytimessearch.R;
 import com.fadetoproductions.rvkn.nytimessearch.adapters.ArticleArrayAdapter;
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
+import com.fadetoproductions.rvkn.nytimessearch.utils.Reachability;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -112,6 +113,11 @@ public class SearchActivity extends AppCompatActivity {
         params.put("page", 0);
         params.put("q", query);
 
+        Reachability reach = new Reachability(this);
+        if (!reach.checkAndHandleConnection()) {
+            return;
+        }
+
         client.get(url, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -128,5 +134,4 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
     }
-
 }
