@@ -2,14 +2,15 @@ package com.fadetoproductions.rvkn.nytimessearch.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 
 import com.fadetoproductions.rvkn.nytimessearch.R;
@@ -31,15 +32,10 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
 
-    @BindView(R.id.etQuery) EditText etQuery;
     @BindView(R.id.gvResults) GridView gvResults;
-    @BindView(R.id.btnSearch) Button btnSearch;
-
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
-
-
 
 //    https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=e844336f8dca4d5e934d0cab5ff9cc89&q=android
 
@@ -51,14 +47,12 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
         setupViews();
-
     }
 
     public void setupViews() {
         articles = new ArrayList<>();
         articleArrayAdapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(articleArrayAdapter);
-
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -69,14 +63,30 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-        return true;
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchForTerm(query);
+                searchView.clearFocus();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -94,10 +104,7 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onArticleSearch(View view) {
-        String query = etQuery.getText().toString();
-//        Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
-
+    public void searchForTerm(String query) {
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
         RequestParams params = new RequestParams();
@@ -113,8 +120,6 @@ public class SearchActivity extends AppCompatActivity {
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                     articles.addAll(Article.fromJsonArray(articleJsonResults));
-
-
                     articleArrayAdapter.addAll(Article.fromJsonArray(articleJsonResults));
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -122,8 +127,6 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
+
 }
