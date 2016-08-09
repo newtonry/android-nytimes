@@ -25,13 +25,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
 
-    EditText etQuery;
-    GridView gvResults;
-    Button btnSearch;
+    @BindView(R.id.etQuery) EditText etQuery;
+    @BindView(R.id.gvResults) GridView gvResults;
+    @BindView(R.id.btnSearch) Button btnSearch;
+
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
@@ -46,14 +49,12 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
         setupViews();
 
     }
 
     public void setupViews() {
-        etQuery = (EditText) findViewById(R.id.etQuery);
-        gvResults = (GridView) findViewById(R.id.gvResults);
-        btnSearch = (Button) findViewById(R.id.btnSearch);
         articles = new ArrayList<>();
         articleArrayAdapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(articleArrayAdapter);
