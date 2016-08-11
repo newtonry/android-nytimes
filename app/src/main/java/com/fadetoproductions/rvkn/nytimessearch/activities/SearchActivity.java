@@ -1,8 +1,8 @@
 package com.fadetoproductions.rvkn.nytimessearch.activities;
 
-import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -14,24 +14,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.fadetoproductions.rvkn.nytimessearch.EndlessScrollListener;
 import com.fadetoproductions.rvkn.nytimessearch.R;
 import com.fadetoproductions.rvkn.nytimessearch.adapters.ArticleArrayAdapter;
+import com.fadetoproductions.rvkn.nytimessearch.clients.ArticleClient;
 import com.fadetoproductions.rvkn.nytimessearch.fragments.SettingsFragment;
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
 import com.fadetoproductions.rvkn.nytimessearch.utils.Reachability;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -39,6 +33,11 @@ public class SearchActivity extends AppCompatActivity {
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
+
+    int page = 0;
+    String query;
+
+
 
 //    https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=e844336f8dca4d5e934d0cab5ff9cc89&q=android
 
@@ -66,12 +65,36 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        gvResults.setOnScrollListener(new EndlessScrollListener(20, 1) {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                page += 1;
+                searchForTerm("android");
+                return false;
+            }
+        });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_search, menu);
+
+        MenuItem settingsItem = menu.findItem(R.id.action_settings);
+        settingsItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                SettingsFragment settingsFragment = new SettingsFragment();
+                FragmentManager fm = getSupportFragmentManager();
+                settingsFragment.show(fm, "settings_fragment");
+
+                return true;
+            }
+        });
+
         MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
@@ -100,50 +123,56 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-//            MovieActivity context = (MovieActivity) getContext();
-//            DetailsFragment detailsFragment = DetailsFragment.newInstance(movie);
-//            FragmentManager fm = context.getSupportFragmentManager();
-//            detailsFragment.show(fm, "details_fragment");
-
-            SettingsFragment settingsFragment = new SettingsFragment();
-            FragmentManager fm = getSupportFragmentManager();
-            settingsFragment.show(fm, "settings_fragment");
-
-
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            SettingsFragment settingsFragment = new SettingsFragment();
+//            FragmentManager fm = getSupportFragmentManager();
+//            settingsFragment.show(fm, "settings_fragment");
+//
+//
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
 
     public void searchForTerm(String query) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-        RequestParams params = new RequestParams();
-        params.put("api-key", "e844336f8dca4d5e934d0cab5ff9cc89");
-        params.put("page", 0);
-        params.put("q", query);
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+//        RequestParams params = new RequestParams();
+//        params.put("api-key", "e844336f8dca4d5e934d0cab5ff9cc89");
+//        params.put("page", page);
+//        params.put("q", query);
 
         Reachability reach = new Reachability(this);
         if (!reach.checkAndHandleConnection()) {
             return;
         }
 
-        client.get(url, params, new JsonHttpResponseHandler() {
+        ArticleClient articleClient = new ArticleClient();
+        articleClient.setListener(new ArticleClient.ArticleClientListener() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                JSONArray articleJsonResults = null;
-                try {
-                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    articles.addAll(Article.fromJsonArray(articleJsonResults));
-                    articleArrayAdapter.addAll(Article.fromJsonArray(articleJsonResults));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+            public void searchForTermSuccess(ArrayList<Article> resultArticles) {
+                articles.addAll(resultArticles);
+                articleArrayAdapter.addAll(resultArticles);
             }
         });
+        articleClient.searchForTerm(query);
+
+
+//        client.get(url, params, new JsonHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                super.onSuccess(statusCode, headers, response);
+//                JSONArray articleJsonResults = null;
+//                try {
+//                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+//                    articles.addAll(Article.fromJsonArray(articleJsonResults));
+//                    articleArrayAdapter.addAll(Article.fromJsonArray(articleJsonResults));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
     }
 }

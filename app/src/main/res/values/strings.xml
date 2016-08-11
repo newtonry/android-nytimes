@@ -5,4 +5,5 @@
     <string name="search">Search</string>
     <string name="title_activity_article">ArticleActivity</string>
     <string name="network_unreachable">The network is unreachable</string>
+    <string name="settings">Settings</string>
 </resources>
