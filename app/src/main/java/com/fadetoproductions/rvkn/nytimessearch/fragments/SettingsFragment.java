@@ -16,14 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.fadetoproductions.rvkn.nytimessearch.R;
 import com.fadetoproductions.rvkn.nytimessearch.activities.SearchActivity;
 import com.fadetoproductions.rvkn.nytimessearch.clients.ArticleClient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -37,7 +40,6 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Log.d("Date", "Year=" + year + " Month=" + (monthOfYear + 1) + " day=" + dayOfMonth);
         hideDatePicker();
-
     }
 
     public interface SettingsDialogListener {
@@ -52,6 +54,10 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
     Spinner spnrSort;
     DatePicker datePicker;
     Button btnDatePickerSave;
+    TextView tvBeginDate;
+    CheckBox cbFashion;
+    CheckBox cbArts;
+    CheckBox cbSports;
 
 
     @Override
@@ -71,13 +77,8 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
     }
 
     private void setupDatePickers() {
-        datePicker.setVisibility(View.INVISIBLE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-
-
-        Log.v("sdafdsa", "Hewrewre");
-
 
         datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
             @Override
@@ -96,18 +97,12 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         spnrSort = (Spinner) view.findViewById(R.id.spnrSort);
         datePicker = (DatePicker) view.findViewById(R.id.datePicker);
         btnDatePickerSave = (Button) view.findViewById(R.id.btnDatePickerSave);
-
+        tvBeginDate = (TextView) view.findViewById(R.id.tvBeginDate);
+        cbArts = (CheckBox) view.findViewById(R.id.cbArts);
+        cbFashion = (CheckBox) view.findViewById(R.id.cbFashion);
+        cbSports = (CheckBox) view.findViewById(R.id.cbSports);
+        setupListeners();
         setupDatePickers();
-
-
-
-
-//        datePicker.setOndate
-
-
-
-
-
 
         List<String> sortArray = Arrays.asList(getResources().getStringArray(R.array.sort_options));
 
@@ -115,14 +110,21 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
             int indexOfOption = sortArray.indexOf(articleClient.getSort());
              spnrSort.setSelection(indexOfOption);
         }
+    }
 
 
+    public void setupListeners() {
         etBeginDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datePicker.setVisibility(View.VISIBLE);
-
+                openDatePickerDialogue();
+//                showDatePicker();
             }
+        });
+
+        btnDatePickerSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {hideDatePicker();}
         });
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -132,7 +134,53 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
             }
         });
 
+        cbArts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { onCheckboxClicked();}
+        });
+        cbFashion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { onCheckboxClicked();}
+        });
+        cbSports.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { onCheckboxClicked();}
+        });
+    }
 
+    public void openDatePickerDialogue() {
+        DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                datePicked(year, month, day);
+            }
+        };
+        DatePickerDialog dpDialogue = new DatePickerDialog(getActivity(), listener, 2015, 1, 1);
+        dpDialogue.show();
+    }
+
+    public void datePicked(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+
+        todo.dueDate = calendar.getTime();
+
+    }
+
+
+    public void onCheckboxClicked() {
+        ArrayList<String> topics = new ArrayList<>();
+        if (cbArts.isChecked()) {
+            topics.add("arts");
+        }
+        if (cbFashion.isChecked()) {
+            topics.add("fashion");
+        }
+        if (cbSports.isChecked()) {
+            topics.add("sports");
+        }
+
+        articleClient.topics = topics;
     }
 
 
@@ -145,7 +193,7 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         Display display = window.getWindowManager().getDefaultDisplay();
         display.getSize(size);
         // Set the width of the dialog proportional to 75% of the screen width
-        window.setLayout((int) (size.x * 0.8), (int) (size.y * 0.8));
+        window.setLayout((int) (size.x * 0.9), (int) (size.y * 0.9));
         window.setGravity(Gravity.CENTER);
         // Call super onResume after sizing
         super.onResume();
@@ -153,11 +201,9 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
 
     public void onSave() {
         Boolean changesMade = true;
-
         // Get the values
         String sort = spnrSort.getSelectedItem().toString();
         articleClient.setSort(sort);
-
         listener.onFinishDialog(changesMade);
         dismiss();
     }
@@ -165,9 +211,20 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
     private void hideDatePicker() {
         datePicker.setVisibility(View.INVISIBLE);
         btnDatePickerSave.setVisibility(View.INVISIBLE);
+
+        etBeginDate.setVisibility(View.VISIBLE);
+        btnSave.setVisibility(View.VISIBLE);
+        spnrSort.setVisibility(View.VISIBLE);
+        datePicker.setVisibility(View.VISIBLE);
+        tvBeginDate.setVisibility(View.VISIBLE);
     }
 
     private void showDatePicker() {
+        etBeginDate.setVisibility(View.INVISIBLE);
+        btnSave.setVisibility(View.INVISIBLE);
+        spnrSort.setVisibility(View.INVISIBLE);
+        tvBeginDate.setVisibility(View.INVISIBLE);
+
         datePicker.setVisibility(View.VISIBLE);
         btnDatePickerSave.setVisibility(View.VISIBLE);
     }

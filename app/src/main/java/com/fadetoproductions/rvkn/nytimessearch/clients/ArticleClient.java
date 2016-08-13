@@ -1,6 +1,7 @@
 package com.fadetoproductions.rvkn.nytimessearch.clients;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
@@ -29,24 +30,27 @@ public class ArticleClient {
     private String BASE_URL = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     public int RESULTS_PER_PAGE = 10;
 
+    private ArticleClientListener listener;
+    public ArrayList<String> topics;
+    Context context;
+    String query;
+    Date beginDate;
+    Date endDate;
+    String sort;
+    Integer page;
+
+
+
     public void setListener(ArticleClientListener listener) {
         this.listener = listener;
     }
 
-    private ArticleClientListener listener;
-    Context context;
-
     public void setQuery(String query) {
         this.query = query;
     }
-
     public void nextPage() {
         page += 1;
     }
-
-    String query;
-    Date beginDate;
-    Date endDate;
 
     public String getSort() {
         return sort;
@@ -55,9 +59,6 @@ public class ArticleClient {
     public void setSort(String sort) {
         this.sort = sort;
     }
-
-    String sort;
-    Integer page;
 
     public ArticleClient(Context context) {
         this.context = context;
@@ -71,6 +72,7 @@ public class ArticleClient {
         sort = null;
         beginDate = null;
         endDate = null;
+        topics = new ArrayList<>();
     }
 
     public void search() {
@@ -108,6 +110,11 @@ public class ArticleClient {
         params.put("api-key", API_KEY);
         params.put("page", page);
         params.put("q", query);
+
+        if (!topics.isEmpty()) {
+            String newsDeskQuery = "news_desk:(" + TextUtils.join(", ", topics) + ")";
+            params.put("fq", newsDeskQuery);
+        }
 
         if (sort != null) {
             params.put("sort", sort);

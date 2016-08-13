@@ -2,20 +2,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/holo_green_dark"
+    android:background="@android:color/white"
+    android:padding="20dp"
     >
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/etBeginDate"
+        android:layout_height="20dp"
+        android:id="@+id/tvBeginDate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:text="@string/search_start_date"
+        />
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/etBeginDate"
+        android:layout_alignTop="@id/tvBeginDate"
+        android:layout_toLeftOf="@id/tvBeginDate"
+        android:layout_alignBottom="@id/tvBeginDate"
+
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="154dp"
-        android:layout_marginEnd="154dp"
-        />
+        android:inputType="date" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -27,30 +37,52 @@
         android:entries="@array/sort_options"
         />
 
+    <CheckBox android:id="@+id/cbArts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/arts"
+        android:layout_below="@id/spnrSort"
+        />
+    <CheckBox android:id="@+id/cbFashion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fashion_style"
+        android:layout_below="@id/cbArts"
+        />
+    <CheckBox android:id="@+id/cbSports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sports"
+        android:layout_below="@id/cbFashion"
+        />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save"
         android:id="@+id/btnSave"
-        android:layout_below="@+id/spnrSort"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/cbSports"
+        android:layout_centerHorizontal="true"
+        />
 
     <DatePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/datePicker"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        android:visibility="invisible"
         />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/datePicker"
         android:id="@+id/btnDatePickerSave"
+        android:layout_centerHorizontal="true"
+        android:text="@string/update_date"
+        android:visibility="invisible"
         />
 
 

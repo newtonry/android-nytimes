@@ -135,7 +135,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
 
     @Override
     public void onFinishDialog(Boolean changesMade) {
-        articles = new ArrayList<>();
+        articles.clear();
         articleArrayAdapter.clear();
 //        pbProgressAction.setVisibility(View.VISIBLE);
         articleClient.search();
