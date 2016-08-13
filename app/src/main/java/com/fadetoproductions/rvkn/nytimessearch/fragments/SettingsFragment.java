@@ -36,7 +36,7 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Log.d("Date", "Year=" + year + " Month=" + (monthOfYear + 1) + " day=" + dayOfMonth);
-        view.setVisibility(View.INVISIBLE);
+        hideDatePicker();
 
     }
 
@@ -51,6 +51,7 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
     Button btnSave;
     Spinner spnrSort;
     DatePicker datePicker;
+    Button btnDatePickerSave;
 
 
     @Override
@@ -83,7 +84,6 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
             public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
                 Log.d("Date", "Year=" + year + " Month=" + (month + 1) + " day=" + dayOfMonth);
                 datePicker.setVisibility(View.INVISIBLE);
-                Log.v("sdafdsa", "Hewrewre222");
             }
         });
 
@@ -95,7 +95,7 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         btnSave = (Button) view.findViewById(R.id.btnSave);
         spnrSort = (Spinner) view.findViewById(R.id.spnrSort);
         datePicker = (DatePicker) view.findViewById(R.id.datePicker);
-
+        btnDatePickerSave = (Button) view.findViewById(R.id.btnDatePickerSave);
 
         setupDatePickers();
 
@@ -158,11 +158,18 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         String sort = spnrSort.getSelectedItem().toString();
         articleClient.setSort(sort);
 
-
         listener.onFinishDialog(changesMade);
         dismiss();
-
     }
 
+    private void hideDatePicker() {
+        datePicker.setVisibility(View.INVISIBLE);
+        btnDatePickerSave.setVisibility(View.INVISIBLE);
+    }
+
+    private void showDatePicker() {
+        datePicker.setVisibility(View.VISIBLE);
+        btnDatePickerSave.setVisibility(View.VISIBLE);
+    }
 
 }

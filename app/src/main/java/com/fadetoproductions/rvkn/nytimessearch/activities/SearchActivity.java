@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ProgressBar;
 
 import com.fadetoproductions.rvkn.nytimessearch.EndlessScrollListener;
 import com.fadetoproductions.rvkn.nytimessearch.R;
@@ -30,7 +29,7 @@ import butterknife.ButterKnife;
 public class SearchActivity extends AppCompatActivity implements SettingsFragment.SettingsDialogListener {
 
     @BindView(R.id.gvResults) GridView gvResults;
-    @BindView(R.id.pbProgressAction) ProgressBar pbProgressAction;
+//    @BindView(R.id.pbProgressAction) ProgressBar pbProgressAction;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
@@ -75,7 +74,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
 
         articleClient.setQuery("Ryan");
         articleClient.search();
-        pbProgressAction.setVisibility(View.VISIBLE);
+//        pbProgressAction.setVisibility(View.VISIBLE);
 
     }
 
@@ -85,7 +84,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
             @Override
             public void searchSuccess(ArrayList<Article> resultArticles) {
                 articles.addAll(resultArticles);
-                pbProgressAction.setVisibility(View.INVISIBLE);
+//                pbProgressAction.setVisibility(View.INVISIBLE);
                 articleArrayAdapter.addAll(resultArticles);
                 articleArrayAdapter.notifyDataSetChanged();
 
@@ -119,7 +118,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
                 articles = new ArrayList<>();
                 articleArrayAdapter.clear();
                 articleClient.setQuery(query);
-                pbProgressAction.setVisibility(View.VISIBLE);
+//                pbProgressAction.setVisibility(View.VISIBLE);
                 articleClient.search();
                 searchView.clearFocus();
                 return false;
@@ -138,7 +137,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
     public void onFinishDialog(Boolean changesMade) {
         articles = new ArrayList<>();
         articleArrayAdapter.clear();
-        pbProgressAction.setVisibility(View.VISIBLE);
+//        pbProgressAction.setVisibility(View.VISIBLE);
         articleClient.search();
     }
 }

@@ -74,6 +74,8 @@ public class ArticleClient {
     }
 
     public void search() {
+        Log.v("test", "searching");
+
         Reachability reach = new Reachability(context);
         if (!reach.checkAndHandleConnection()) {
             return;
