@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.fadetoproductions.rvkn.nytimessearch.EndlessScrollListener;
 import com.fadetoproductions.rvkn.nytimessearch.R;
@@ -20,24 +21,20 @@ import com.fadetoproductions.rvkn.nytimessearch.adapters.ArticleArrayAdapter;
 import com.fadetoproductions.rvkn.nytimessearch.clients.ArticleClient;
 import com.fadetoproductions.rvkn.nytimessearch.fragments.SettingsFragment;
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
-import com.fadetoproductions.rvkn.nytimessearch.utils.Reachability;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements SettingsFragment.SettingsDialogListener {
 
     @BindView(R.id.gvResults) GridView gvResults;
+    @BindView(R.id.pbProgressAction) ProgressBar pbProgressAction;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
-
-    int page = 0;
-    String query;
-
-
+    ArticleClient articleClient;
 
 //    https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=e844336f8dca4d5e934d0cab5ff9cc89&q=android
 
@@ -48,6 +45,7 @@ public class SearchActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        setupArticleClient();
         setupViews();
     }
 
@@ -66,16 +64,33 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-
         gvResults.setOnScrollListener(new EndlessScrollListener(20, 1) {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                page += 1;
-                searchForTerm("android");
+                articleClient.nextPage();
+                articleClient.search();
                 return false;
             }
         });
 
+        articleClient.setQuery("Ryan");
+        articleClient.search();
+        pbProgressAction.setVisibility(View.VISIBLE);
+
+    }
+
+    private void setupArticleClient() {
+        articleClient = new ArticleClient(this);
+        articleClient.setListener(new ArticleClient.ArticleClientListener() {
+            @Override
+            public void searchSuccess(ArrayList<Article> resultArticles) {
+                articles.addAll(resultArticles);
+                pbProgressAction.setVisibility(View.INVISIBLE);
+                articleArrayAdapter.addAll(resultArticles);
+                articleArrayAdapter.notifyDataSetChanged();
+
+            }
+        });
     }
 
     @Override
@@ -88,9 +103,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 SettingsFragment settingsFragment = new SettingsFragment();
+                settingsFragment.articleClient = articleClient;
                 FragmentManager fm = getSupportFragmentManager();
                 settingsFragment.show(fm, "settings_fragment");
-
                 return true;
             }
         });
@@ -101,7 +116,11 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchForTerm(query);
+                articles = new ArrayList<>();
+                articleArrayAdapter.clear();
+                articleClient.setQuery(query);
+                pbProgressAction.setVisibility(View.VISIBLE);
+                articleClient.search();
                 searchView.clearFocus();
                 return false;
             }
@@ -116,63 +135,10 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            SettingsFragment settingsFragment = new SettingsFragment();
-//            FragmentManager fm = getSupportFragmentManager();
-//            settingsFragment.show(fm, "settings_fragment");
-//
-//
-//            return true;
-//        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void searchForTerm(String query) {
-//        AsyncHttpClient client = new AsyncHttpClient();
-//        String url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-//        RequestParams params = new RequestParams();
-//        params.put("api-key", "e844336f8dca4d5e934d0cab5ff9cc89");
-//        params.put("page", page);
-//        params.put("q", query);
-
-        Reachability reach = new Reachability(this);
-        if (!reach.checkAndHandleConnection()) {
-            return;
-        }
-
-        ArticleClient articleClient = new ArticleClient();
-        articleClient.setListener(new ArticleClient.ArticleClientListener() {
-            @Override
-            public void searchForTermSuccess(ArrayList<Article> resultArticles) {
-                articles.addAll(resultArticles);
-                articleArrayAdapter.addAll(resultArticles);
-            }
-        });
-        articleClient.searchForTerm(query);
-
-
-//        client.get(url, params, new JsonHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                super.onSuccess(statusCode, headers, response);
-//                JSONArray articleJsonResults = null;
-//                try {
-//                    articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-//                    articles.addAll(Article.fromJsonArray(articleJsonResults));
-//                    articleArrayAdapter.addAll(Article.fromJsonArray(articleJsonResults));
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
+    public void onFinishDialog(Boolean changesMade) {
+        articles = new ArrayList<>();
+        articleArrayAdapter.clear();
+        pbProgressAction.setVisibility(View.VISIBLE);
+        articleClient.search();
     }
 }
