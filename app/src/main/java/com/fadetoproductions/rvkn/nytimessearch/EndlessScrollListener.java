@@ -20,9 +20,6 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
     // Sets the starting page index
     private int startingPageIndex = 0;
 
-    public EndlessScrollListener() {
-    }
-
     public EndlessScrollListener(int visibleThreshold, int startPage) {
         this.visibleThreshold = visibleThreshold;
         this.startingPageIndex = startPage;
@@ -44,10 +41,6 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
             currentPage++;
         }
         if (!loading && (firstVisibleItem + visibleItemCount + visibleThreshold) >= totalItemCount) {
-            Log.v("firstvisibleitem", Integer.toString(firstVisibleItem));
-            Log.v("visibleItemCount", Integer.toString(visibleItemCount));
-            Log.v("visiblethreshold", Integer.toString(visibleThreshold));
-
             onLoadMore(currentPage + 1, totalItemCount);
         }
 

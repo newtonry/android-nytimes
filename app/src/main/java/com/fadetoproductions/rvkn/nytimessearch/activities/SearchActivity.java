@@ -64,12 +64,12 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
             }
         });
 
-        gvResults.setOnScrollListener(new EndlessScrollListener(20, 1) {
+        gvResults.setOnScrollListener(new EndlessScrollListener(10, 1) {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                if (!articleClient.getOutOfResults()) {
-                    return false;
-                }
+//                if (!articleClient.getOutOfResults()) {
+//                    return false;
+//                }
                 articleClient.nextPage();
                 articleClient.search();
                 return false;
@@ -77,8 +77,6 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
         });
 
         articleClient.search();
-//        pbProgressAction.setVisibility(View.VISIBLE);
-
     }
 
     private void setupArticleClient() {
@@ -95,7 +93,6 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
                 pbProgressAction.setVisibility(View.INVISIBLE);
                 articleArrayAdapter.addAll(resultArticles);
                 articleArrayAdapter.notifyDataSetChanged();
-
             }
         });
     }
@@ -126,7 +123,6 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
                 articles = new ArrayList<>();
                 articleArrayAdapter.clear();
                 articleClient.setQuery(query);
-//                pbProgressAction.setVisibility(View.VISIBLE);
                 articleClient.resetPage();
                 articleClient.search();
                 searchView.clearFocus();
@@ -144,10 +140,9 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
 
     @Override
     public void onFinishDialog(Boolean changesMade) {
+        // TODO both of these shouldn't need to be cleared
         articles.clear();
-
         articleArrayAdapter.clear();
-//        pbProgressAction.setVisibility(View.VISIBLE);
         articleClient.resetPage();
         articleClient.search();
     }

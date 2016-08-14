@@ -119,7 +119,7 @@ public class SettingsFragment extends DialogFragment {
         etEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                targetDate = "etEndDate";
+                targetDate = "endDate";
                 openDatePickerDialogue();
             }
         });

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
-import com.fadetoproductions.rvkn.nytimessearch.utils.Reachability;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -88,10 +87,10 @@ public class ArticleClient {
 
     public void search() {
         listener.onSearch();
-        Reachability reach = new Reachability(context);
-        if (!reach.checkAndHandleConnection()) {
-            return;
-        }
+//        Reachability reach = new Reachability(context);
+//        if (!reach.checkAndHandleConnection()) {
+//            return;
+//        }
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = getRequestParams();
@@ -123,7 +122,6 @@ public class ArticleClient {
         RequestParams params = new RequestParams();
         params.put("api-key", API_KEY);
         params.put("page", page);
-
         if (!query.isEmpty()) {
             params.put("q", query);
         }
@@ -138,9 +136,8 @@ public class ArticleClient {
             params.put("begin_date", dateFormat.format(beginDate.getTime()));
         }
         if (endDate != null) {
-            params.put("begin_date", dateFormat.format(endDate.getTime()));
+            params.put("end_date", dateFormat.format(endDate.getTime()));
         }
-
         return params;
     }
 
