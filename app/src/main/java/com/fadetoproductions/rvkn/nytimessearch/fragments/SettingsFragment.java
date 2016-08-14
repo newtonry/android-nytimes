@@ -8,7 +8,6 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,31 +33,22 @@ import java.util.List;
 /**
  * Created by rnewton on 8/9/16.
  */
-public class SettingsFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        Log.d("Date", "Year=" + year + " Month=" + (monthOfYear + 1) + " day=" + dayOfMonth);
-        hideDatePicker();
-    }
+public class SettingsFragment extends DialogFragment {
 
     public interface SettingsDialogListener {
         void onFinishDialog(Boolean changesMade);
     }
-
 
     SearchActivity listener;
     public ArticleClient articleClient;  // TODO should stop using this pattern
     EditText etBeginDate;
     Button btnSave;
     Spinner spnrSort;
-    DatePicker datePicker;
-    Button btnDatePickerSave;
     TextView tvBeginDate;
     CheckBox cbFashion;
     CheckBox cbArts;
     CheckBox cbSports;
-
+    String targetDate;
 
     @Override
     public void onAttach(Context context) {
@@ -70,24 +60,8 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        // Defines the xml file for the fragment
-//        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return inflater.inflate(R.layout.settings_fragment, parent, false);
-    }
-
-    private void setupDatePickers() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-
-        datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                Log.d("Date", "Year=" + year + " Month=" + (month + 1) + " day=" + dayOfMonth);
-                datePicker.setVisibility(View.INVISIBLE);
-            }
-        });
-
     }
 
     @Override
@@ -95,14 +69,11 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         etBeginDate = (EditText) view.findViewById(R.id.etBeginDate);
         btnSave = (Button) view.findViewById(R.id.btnSave);
         spnrSort = (Spinner) view.findViewById(R.id.spnrSort);
-        datePicker = (DatePicker) view.findViewById(R.id.datePicker);
-        btnDatePickerSave = (Button) view.findViewById(R.id.btnDatePickerSave);
         tvBeginDate = (TextView) view.findViewById(R.id.tvBeginDate);
         cbArts = (CheckBox) view.findViewById(R.id.cbArts);
         cbFashion = (CheckBox) view.findViewById(R.id.cbFashion);
         cbSports = (CheckBox) view.findViewById(R.id.cbSports);
         setupListeners();
-        setupDatePickers();
 
         List<String> sortArray = Arrays.asList(getResources().getStringArray(R.array.sort_options));
 
@@ -117,14 +88,9 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         etBeginDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                targetDate = "beginDate";
                 openDatePickerDialogue();
-//                showDatePicker();
             }
-        });
-
-        btnDatePickerSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {hideDatePicker();}
         });
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -163,8 +129,10 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
-        todo.dueDate = calendar.getTime();
-
+        if (targetDate.equals("beginDate")) { // This seems really dumb
+            // TODO don't set the article client here. wait for save
+            articleClient.beginDate = calendar.getTime();
+        }
     }
 
 
@@ -207,26 +175,4 @@ public class SettingsFragment extends DialogFragment implements DatePickerDialog
         listener.onFinishDialog(changesMade);
         dismiss();
     }
-
-    private void hideDatePicker() {
-        datePicker.setVisibility(View.INVISIBLE);
-        btnDatePickerSave.setVisibility(View.INVISIBLE);
-
-        etBeginDate.setVisibility(View.VISIBLE);
-        btnSave.setVisibility(View.VISIBLE);
-        spnrSort.setVisibility(View.VISIBLE);
-        datePicker.setVisibility(View.VISIBLE);
-        tvBeginDate.setVisibility(View.VISIBLE);
-    }
-
-    private void showDatePicker() {
-        etBeginDate.setVisibility(View.INVISIBLE);
-        btnSave.setVisibility(View.INVISIBLE);
-        spnrSort.setVisibility(View.INVISIBLE);
-        tvBeginDate.setVisibility(View.INVISIBLE);
-
-        datePicker.setVisibility(View.VISIBLE);
-        btnDatePickerSave.setVisibility(View.VISIBLE);
-    }
-
 }

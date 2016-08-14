@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -28,14 +29,15 @@ public class ArticleClient {
 
     private String API_KEY = "e844336f8dca4d5e934d0cab5ff9cc89";
     private String BASE_URL = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+    public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMDD");
     public int RESULTS_PER_PAGE = 10;
 
     private ArticleClientListener listener;
     public ArrayList<String> topics;
+    public Date beginDate;
+    public Date endDate;
     Context context;
     String query;
-    Date beginDate;
-    Date endDate;
     String sort;
     Integer page;
 
@@ -109,18 +111,23 @@ public class ArticleClient {
         RequestParams params = new RequestParams();
         params.put("api-key", API_KEY);
         params.put("page", page);
-        params.put("q", query);
 
+        if (!query.isEmpty()) {
+            params.put("q", query);
+        }
         if (!topics.isEmpty()) {
             String newsDeskQuery = "news_desk:(" + TextUtils.join(", ", topics) + ")";
             params.put("fq", newsDeskQuery);
         }
-
         if (sort != null) {
             params.put("sort", sort);
         }
-
-        // TODO begin date stuff
+        if (beginDate != null) {
+            params.put("begin_date", dateFormat.format(beginDate.getTime()));
+        }
+        if (endDate != null) {
+            params.put("begin_date", dateFormat.format(endDate.getTime()));
+        }
 
         return params;
     }
