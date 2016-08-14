@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.fadetoproductions.rvkn.nytimessearch.EndlessScrollListener;
 import com.fadetoproductions.rvkn.nytimessearch.R;
@@ -29,7 +30,7 @@ import butterknife.ButterKnife;
 public class SearchActivity extends AppCompatActivity implements SettingsFragment.SettingsDialogListener {
 
     @BindView(R.id.gvResults) GridView gvResults;
-//    @BindView(R.id.pbProgressAction) ProgressBar pbProgressAction;
+    @BindView(R.id.pbProgressAction) ProgressBar pbProgressAction;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter articleArrayAdapter;
@@ -66,13 +67,15 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
         gvResults.setOnScrollListener(new EndlessScrollListener(20, 1) {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
+                if (!articleClient.getOutOfResults()) {
+                    return false;
+                }
                 articleClient.nextPage();
                 articleClient.search();
                 return false;
             }
         });
 
-        articleClient.setQuery("Ryan");
         articleClient.search();
 //        pbProgressAction.setVisibility(View.VISIBLE);
 
@@ -82,9 +85,14 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
         articleClient = new ArticleClient(this);
         articleClient.setListener(new ArticleClient.ArticleClientListener() {
             @Override
+            public void onSearch() {
+                pbProgressAction.setVisibility(View.VISIBLE);
+            }
+
+            @Override
             public void searchSuccess(ArrayList<Article> resultArticles) {
                 articles.addAll(resultArticles);
-//                pbProgressAction.setVisibility(View.INVISIBLE);
+                pbProgressAction.setVisibility(View.INVISIBLE);
                 articleArrayAdapter.addAll(resultArticles);
                 articleArrayAdapter.notifyDataSetChanged();
 
@@ -119,6 +127,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
                 articleArrayAdapter.clear();
                 articleClient.setQuery(query);
 //                pbProgressAction.setVisibility(View.VISIBLE);
+                articleClient.resetPage();
                 articleClient.search();
                 searchView.clearFocus();
                 return false;
@@ -136,8 +145,10 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
     @Override
     public void onFinishDialog(Boolean changesMade) {
         articles.clear();
+
         articleArrayAdapter.clear();
 //        pbProgressAction.setVisibility(View.VISIBLE);
+        articleClient.resetPage();
         articleClient.search();
     }
 }

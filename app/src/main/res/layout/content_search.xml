@@ -22,15 +22,14 @@
         android:layout_alignParentStart="true"
         android:numColumns="4" />
 
-    <!--<ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--style="?android:attr/progressBarStyleLarge"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignTop="@id/gvResults"-->
-        <!--android:layout_alignRight="@id/gvResults"-->
-        <!--android:layout_alignEnd="@id/gvResults"-->
-        <!--android:layout_alignStart="@id/gvResults"-->
-        <!--android:id="@+id/pbProgressAction"-->
-        <!--android:layout_alignLeft="@id/gvResults" />-->
-
+    <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/gvResults"
+        android:layout_alignRight="@id/gvResults"
+        android:layout_alignEnd="@id/gvResults"
+        android:layout_alignStart="@id/gvResults"
+        android:id="@+id/pbProgressAction"
+        android:layout_alignLeft="@id/gvResults" />
 </RelativeLayout>

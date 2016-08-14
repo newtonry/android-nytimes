@@ -25,6 +25,7 @@ import com.fadetoproductions.rvkn.nytimessearch.R;
 import com.fadetoproductions.rvkn.nytimessearch.activities.SearchActivity;
 import com.fadetoproductions.rvkn.nytimessearch.clients.ArticleClient;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,6 +43,7 @@ public class SettingsFragment extends DialogFragment {
     SearchActivity listener;
     public ArticleClient articleClient;  // TODO should stop using this pattern
     EditText etBeginDate;
+    EditText etEndDate;
     Button btnSave;
     Spinner spnrSort;
     TextView tvBeginDate;
@@ -49,6 +51,8 @@ public class SettingsFragment extends DialogFragment {
     CheckBox cbArts;
     CheckBox cbSports;
     String targetDate;
+
+    private SimpleDateFormat etDateFormat = new SimpleDateFormat("MMM d, yyyy");
 
     @Override
     public void onAttach(Context context) {
@@ -67,6 +71,7 @@ public class SettingsFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         etBeginDate = (EditText) view.findViewById(R.id.etBeginDate);
+        etEndDate = (EditText) view.findViewById(R.id.etEndDate);
         btnSave = (Button) view.findViewById(R.id.btnSave);
         spnrSort = (Spinner) view.findViewById(R.id.spnrSort);
         tvBeginDate = (TextView) view.findViewById(R.id.tvBeginDate);
@@ -74,12 +79,31 @@ public class SettingsFragment extends DialogFragment {
         cbFashion = (CheckBox) view.findViewById(R.id.cbFashion);
         cbSports = (CheckBox) view.findViewById(R.id.cbSports);
         setupListeners();
+        populateFields();
 
+    }
+
+    public void populateFields() {
+        // Is there a better way to render this than with all these if statements
         List<String> sortArray = Arrays.asList(getResources().getStringArray(R.array.sort_options));
-
         if (articleClient.getSort() != null) {
             int indexOfOption = sortArray.indexOf(articleClient.getSort());
-             spnrSort.setSelection(indexOfOption);
+            spnrSort.setSelection(indexOfOption);
+        }
+        if (articleClient.beginDate != null) {
+            etBeginDate.setText(etDateFormat.format(articleClient.beginDate.getTime()));
+        }
+        if (articleClient.endDate != null) {
+            etEndDate.setText(etDateFormat.format(articleClient.endDate.getTime()));
+        }
+        if (articleClient.topics.contains("arts")) {  // TODO make this an enum
+            cbArts.setChecked(true);
+        }
+        if (articleClient.topics.contains("fashion")) {  // TODO make this an enum
+            cbFashion.setChecked(true);
+        }
+        if (articleClient.topics.contains("sports")) {  // TODO make this an enum
+            cbSports.setChecked(true);
         }
     }
 
@@ -92,14 +116,18 @@ public class SettingsFragment extends DialogFragment {
                 openDatePickerDialogue();
             }
         });
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        etEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onSave();
+                targetDate = "etEndDate";
+                openDatePickerDialogue();
             }
         });
 
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { onSave();}
+        });
         cbArts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { onCheckboxClicked();}
@@ -129,12 +157,20 @@ public class SettingsFragment extends DialogFragment {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
 
+        SimpleDateFormat etDateFormat = new SimpleDateFormat("MMM d, yyyy");
+        String dateString = etDateFormat.format(calendar.getTime());
+
         if (targetDate.equals("beginDate")) { // This seems really dumb
             // TODO don't set the article client here. wait for save
             articleClient.beginDate = calendar.getTime();
+            etBeginDate.setText(dateString);
+        }
+        if (targetDate.equals("endDate")) { // This seems really dumb
+            // TODO don't set the article client here. wait for save
+            articleClient.endDate = calendar.getTime();
+            etEndDate.setText(dateString);
         }
     }
-
 
     public void onCheckboxClicked() {
         ArrayList<String> topics = new ArrayList<>();
@@ -147,7 +183,7 @@ public class SettingsFragment extends DialogFragment {
         if (cbSports.isChecked()) {
             topics.add("sports");
         }
-
+        // TODO don't set the article client here. wait for save
         articleClient.topics = topics;
     }
 

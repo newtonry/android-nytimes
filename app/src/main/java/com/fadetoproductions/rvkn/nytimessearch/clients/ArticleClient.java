@@ -24,6 +24,7 @@ import cz.msebera.android.httpclient.Header;
 public class ArticleClient {
 
     public interface ArticleClientListener {
+        void onSearch();
         void searchSuccess(ArrayList<Article> articles);
     }
 
@@ -41,7 +42,11 @@ public class ArticleClient {
     String sort;
     Integer page;
 
+    public Boolean getOutOfResults() {
+        return outOfResults;
+    }
 
+    Boolean outOfResults;
 
     public void setListener(ArticleClientListener listener) {
         this.listener = listener;
@@ -49,6 +54,9 @@ public class ArticleClient {
 
     public void setQuery(String query) {
         this.query = query;
+    }
+    public void resetPage() {
+        page = 1;
     }
     public void nextPage() {
         page += 1;
@@ -75,11 +83,11 @@ public class ArticleClient {
         beginDate = null;
         endDate = null;
         topics = new ArrayList<>();
+        outOfResults = false;
     }
 
     public void search() {
-        Log.v("test", "searching");
-
+        listener.onSearch();
         Reachability reach = new Reachability(context);
         if (!reach.checkAndHandleConnection()) {
             return;
@@ -87,6 +95,9 @@ public class ArticleClient {
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = getRequestParams();
+
+        Log.v("network-calls", "searching");
+        Log.v("network-calls", "params: " + params.toString());
 
         client.get(BASE_URL, params, new JsonHttpResponseHandler() {
             @Override
@@ -96,10 +107,11 @@ public class ArticleClient {
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                     ArrayList<Article> articleResults = Article.fromJsonArray(articleJsonResults);
-
-                    Log.v("fff", "dsafadsfdafds");
-
-                    listener.searchSuccess(articleResults);
+                    if (articleResults.isEmpty()) {
+                        outOfResults = true;
+                    } else {
+                        listener.searchSuccess(articleResults);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
