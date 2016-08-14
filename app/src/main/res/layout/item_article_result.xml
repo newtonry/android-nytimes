@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:minHeight="100dp"
+    >
 
     <ImageView
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
         android:id="@+id/ivImage"
         android:scaleType="center"
         android:src="@mipmap/ic_launcher"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         />
 
     <TextView
@@ -17,6 +22,8 @@
         android:id="@+id/tvTitle"
         android:maxLines="2"
         android:ellipsize="end"
-        android:text="Text View"
+        android:layout_toLeftOf="@id/ivImage"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         />
-</LinearLayout>
+</RelativeLayout>

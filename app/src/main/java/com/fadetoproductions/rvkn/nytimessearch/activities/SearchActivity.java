@@ -1,20 +1,17 @@
 package com.fadetoproductions.rvkn.nytimessearch.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
-import com.fadetoproductions.rvkn.nytimessearch.EndlessScrollListener;
 import com.fadetoproductions.rvkn.nytimessearch.R;
 import com.fadetoproductions.rvkn.nytimessearch.adapters.ArticleArrayAdapter;
 import com.fadetoproductions.rvkn.nytimessearch.clients.ArticleClient;
@@ -28,7 +25,7 @@ import butterknife.ButterKnife;
 
 public class SearchActivity extends AppCompatActivity implements SettingsFragment.SettingsDialogListener {
 
-    @BindView(R.id.gvResults) GridView gvResults;
+    @BindView(R.id.gvResults) RecyclerView gvResults;
 //    @BindView(R.id.pbProgressAction) ProgressBar pbProgressAction;
 
     ArrayList<Article> articles;
@@ -52,27 +49,35 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
         articles = new ArrayList<>();
         articleArrayAdapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(articleArrayAdapter);
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), ArticleActivity.class);
-                Article article = articles.get(position);
-                intent.putExtra("article", article);
-                startActivity(intent);
-            }
-        });
+        gvResults.setLayoutManager(new LinearLayoutManager(this));
 
-        gvResults.setOnScrollListener(new EndlessScrollListener(20, 1) {
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                articleClient.nextPage();
-                articleClient.search();
-                return false;
-            }
-        });
 
-        articleClient.setQuery("Ryan");
+//        gvResults.setList
+
+
+
+//        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Intent intent = new Intent(getApplicationContext(), ArticleActivity.class);
+//                Article article = articles.get(position);
+//                intent.putExtra("article", article);
+//                startActivity(intent);
+//            }
+//        });
+//
+//        gvResults.setOnScrollListener(new EndlessScrollListener(20, 1) {
+//            @Override
+//            public boolean onLoadMore(int page, int totalItemsCount) {
+//                articleClient.nextPage();
+//                articleClient.search();
+//                return false;
+//            }
+//        });
+
+        articleClient.setQuery("Android");
         articleClient.search();
 //        pbProgressAction.setVisibility(View.VISIBLE);
 
@@ -85,7 +90,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
             public void searchSuccess(ArrayList<Article> resultArticles) {
                 articles.addAll(resultArticles);
 //                pbProgressAction.setVisibility(View.INVISIBLE);
-                articleArrayAdapter.addAll(resultArticles);
+//                articleArrayAdapter.addAll(resultArticles);
                 articleArrayAdapter.notifyDataSetChanged();
 
             }
@@ -116,7 +121,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
             @Override
             public boolean onQueryTextSubmit(String query) {
                 articles = new ArrayList<>();
-                articleArrayAdapter.clear();
+//                articleArrayAdapter.clear();
                 articleClient.setQuery(query);
 //                pbProgressAction.setVisibility(View.VISIBLE);
                 articleClient.search();
@@ -136,7 +141,7 @@ public class SearchActivity extends AppCompatActivity implements SettingsFragmen
     @Override
     public void onFinishDialog(Boolean changesMade) {
         articles = new ArrayList<>();
-        articleArrayAdapter.clear();
+//        articleArrayAdapter.clear();
 //        pbProgressAction.setVisibility(View.VISIBLE);
         articleClient.search();
     }
