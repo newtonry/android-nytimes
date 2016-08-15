@@ -31,7 +31,6 @@ public class ArticleClient {
     private String API_KEY = "e844336f8dca4d5e934d0cab5ff9cc89";
     private String BASE_URL = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMDD");
-    public int RESULTS_PER_PAGE = 10;
 
     private ArticleClientListener listener;
     public ArrayList<String> topics;

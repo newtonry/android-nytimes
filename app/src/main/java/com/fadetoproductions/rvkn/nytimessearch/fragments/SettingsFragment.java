@@ -31,6 +31,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by rnewton on 8/9/16.
  */
@@ -40,19 +43,19 @@ public class SettingsFragment extends DialogFragment {
         void onFinishDialog(Boolean changesMade);
     }
 
-    SearchActivity listener;
-    public ArticleClient articleClient;  // TODO should stop using this pattern
-    EditText etBeginDate;
-    EditText etEndDate;
-    Button btnSave;
-    Spinner spnrSort;
-    TextView tvBeginDate;
-    CheckBox cbFashion;
-    CheckBox cbArts;
-    CheckBox cbSports;
-    String targetDate;
-
     private SimpleDateFormat etDateFormat = new SimpleDateFormat("MMM d, yyyy");
+    public ArticleClient articleClient;  // TODO should stop using this pattern
+    SearchActivity listener;
+    String targetDate;
+    @BindView(R.id.etBeginDate) EditText etEndDate;
+    @BindView(R.id.etEndDate) EditText etBeginDate;
+    @BindView(R.id.btnSave) Button btnSave;
+    @BindView(R.id.spnrSort) Spinner spnrSort;
+    @BindView(R.id.tvBeginDate) TextView tvBeginDate;
+    @BindView(R.id.cbArts) CheckBox cbArts;
+    @BindView(R.id.cbFashion) CheckBox cbFashion;
+    @BindView(R.id.cbSports) CheckBox cbSports;
+
 
     @Override
     public void onAttach(Context context) {
@@ -70,14 +73,7 @@ public class SettingsFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        etBeginDate = (EditText) view.findViewById(R.id.etBeginDate);
-        etEndDate = (EditText) view.findViewById(R.id.etEndDate);
-        btnSave = (Button) view.findViewById(R.id.btnSave);
-        spnrSort = (Spinner) view.findViewById(R.id.spnrSort);
-        tvBeginDate = (TextView) view.findViewById(R.id.tvBeginDate);
-        cbArts = (CheckBox) view.findViewById(R.id.cbArts);
-        cbFashion = (CheckBox) view.findViewById(R.id.cbFashion);
-        cbSports = (CheckBox) view.findViewById(R.id.cbSports);
+        ButterKnife.bind(this, view);
         setupListeners();
         populateFields();
 
@@ -107,7 +103,6 @@ public class SettingsFragment extends DialogFragment {
         }
     }
 
-
     public void setupListeners() {
         etBeginDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +111,7 @@ public class SettingsFragment extends DialogFragment {
                 openDatePickerDialogue();
             }
         });
+
         etEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +124,7 @@ public class SettingsFragment extends DialogFragment {
             @Override
             public void onClick(View v) { onSave();}
         });
+
         cbArts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { onCheckboxClicked();}
