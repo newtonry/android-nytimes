@@ -13,7 +13,7 @@
     <item
         android:orderInCategory="101"
         android:id="@+id/action_settings"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@android:drawable/ic_menu_more"
         android:title="@string/settings"
         app:showAsAction="always"
         />

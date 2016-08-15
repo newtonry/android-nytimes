@@ -175,13 +175,13 @@ public class SettingsFragment extends DialogFragment {
     public void onCheckboxClicked() {
         ArrayList<String> topics = new ArrayList<>();
         if (cbArts.isChecked()) {
-            topics.add("arts");
+            topics.add("Arts");
         }
         if (cbFashion.isChecked()) {
-            topics.add("fashion");
+            topics.add("Fashion & Style");
         }
         if (cbSports.isChecked()) {
-            topics.add("sports");
+            topics.add("Sports");
         }
         // TODO don't set the article client here. wait for save
         articleClient.topics = topics;

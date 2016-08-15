@@ -126,7 +126,7 @@ public class ArticleClient {
             params.put("q", query);
         }
         if (!topics.isEmpty()) {
-            String newsDeskQuery = "news_desk:(" + TextUtils.join(", ", topics) + ")";
+            String newsDeskQuery = "news_desk:(" + TextUtils.join(" ", topics) + ")";
             params.put("fq", newsDeskQuery);
         }
         if (sort != null) {

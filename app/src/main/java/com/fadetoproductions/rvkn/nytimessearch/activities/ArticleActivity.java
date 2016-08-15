@@ -30,6 +30,9 @@ public class ArticleActivity extends AppCompatActivity {
             }
         });
         webView.loadUrl(article.getWebUrl());
+        toolbar.setTitle(article.getHeadline());
+        setSupportActionBar(toolbar);
+
     }
 
 }

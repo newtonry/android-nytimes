@@ -27,9 +27,36 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
     }
 
     public ArticleArrayAdapter(Context context, List<Article> articles) {
-        super(context, R.layout.item_article_result);
+        super(context, R.layout.item_article_normal);
     }
 
+    public enum ArticleStyle {
+        NORMAL, NO_THUMBNAIL, HIGHLIGHTED
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Article article = getItem(position);
+        if (article.getThumbnailImage().isEmpty()) {
+            return ArticleStyle.NO_THUMBNAIL.ordinal();
+        } else if (position % 4 == 0) {
+            return ArticleStyle.HIGHLIGHTED.ordinal();
+        }
+        return ArticleStyle.NORMAL.ordinal();
+    }
+
+    @Override public int getViewTypeCount() {
+        return ArticleStyle.values().length;
+    }
+
+    private View getInflatedLayoutForType(int type) {
+        if (type == ArticleStyle.HIGHLIGHTED.ordinal()) {
+            return LayoutInflater.from(getContext()).inflate(R.layout.item_article_highlighted, null);
+        } else if (type == ArticleStyle.NO_THUMBNAIL.ordinal()) {
+            return LayoutInflater.from(getContext()).inflate(R.layout.item_article_no_image, null);
+        } else
+            return LayoutInflater.from(getContext()).inflate(R.layout.item_article_normal, null);
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -38,9 +65,8 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
 
         if (convertView == null) {
             viewHolder = new ViewHolder();
-
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.item_article_result, parent, false);
+            int type = getItemViewType(position);
+            convertView = getInflatedLayoutForType(type);
 
             viewHolder.imageView = (ImageView) convertView.findViewById(R.id.ivImage);
             viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
