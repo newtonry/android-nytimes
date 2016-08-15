@@ -14,4 +14,7 @@
     <string name="fashion_style"><![CDATA[Fashion & Style]]></string>
     <string name="sports">Sports</string>
     <string name="end_date">End Date</string>
+    <string name="topic_arts">Arts</string>
+    <string name="topic_fashion_style">Fashion &amp; Style</string>
+    <string name="topic_sports">Sports</string>
 </resources>

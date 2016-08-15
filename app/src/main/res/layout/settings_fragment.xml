@@ -13,6 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:text="@string/search_start_date"
+        android:textColor="@android:color/black"
         />
 
     <EditText
@@ -35,6 +36,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:text="@string/end_date"
+        android:textColor="@android:color/black"
         />
 
     <EditText
@@ -54,7 +56,12 @@
         android:id="@+id/spnrSort"
         android:layout_below="@+id/etEndDate"
         android:layout_alignLeft="@id/tvEndDate"
+        android:layout_alignStart="@id/tvEndDate"
         android:entries="@array/sort_options"
+        android:gravity="left"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="-8dp"
+
         />
 
     <CheckBox android:id="@+id/cbArts"
@@ -62,18 +69,22 @@
         android:layout_height="wrap_content"
         android:text="@string/arts"
         android:layout_below="@id/spnrSort"
+        android:layout_marginTop="5dp"
+        android:layout_alignLeft="@id/tvEndDate"
         />
     <CheckBox android:id="@+id/cbFashion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/fashion_style"
         android:layout_below="@id/cbArts"
+        android:layout_alignLeft="@id/cbArts"
         />
     <CheckBox android:id="@+id/cbSports"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sports"
         android:layout_below="@id/cbFashion"
+        android:layout_alignLeft="@id/cbFashion"
         />
 
     <Button
@@ -81,7 +92,7 @@
         android:layout_height="wrap_content"
         android:text="@string/save"
         android:id="@+id/btnSave"
-        android:layout_below="@+id/cbSports"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         />
 

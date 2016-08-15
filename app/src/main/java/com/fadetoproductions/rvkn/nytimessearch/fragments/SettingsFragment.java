@@ -96,13 +96,13 @@ public class SettingsFragment extends DialogFragment {
         if (articleClient.endDate != null) {
             etEndDate.setText(etDateFormat.format(articleClient.endDate.getTime()));
         }
-        if (articleClient.topics.contains("arts")) {  // TODO make this an enum
+        if (articleClient.topics.contains(getResources().getString(R.string.topic_arts))) {
             cbArts.setChecked(true);
         }
-        if (articleClient.topics.contains("fashion")) {  // TODO make this an enum
+        if (articleClient.topics.contains(getResources().getString(R.string.topic_fashion_style))) {
             cbFashion.setChecked(true);
         }
-        if (articleClient.topics.contains("sports")) {  // TODO make this an enum
+        if (articleClient.topics.contains(getResources().getString(R.string.topic_sports))) {
             cbSports.setChecked(true);
         }
     }
@@ -175,18 +175,17 @@ public class SettingsFragment extends DialogFragment {
     public void onCheckboxClicked() {
         ArrayList<String> topics = new ArrayList<>();
         if (cbArts.isChecked()) {
-            topics.add("Arts");
+            topics.add(getResources().getString(R.string.topic_arts));
         }
         if (cbFashion.isChecked()) {
-            topics.add("Fashion & Style");
+            topics.add(getResources().getString(R.string.topic_fashion_style));
         }
         if (cbSports.isChecked()) {
-            topics.add("Sports");
+            topics.add(getResources().getString(R.string.topic_sports));
         }
         // TODO don't set the article client here. wait for save
         articleClient.topics = topics;
     }
-
 
     @Override
     public void onResume() {

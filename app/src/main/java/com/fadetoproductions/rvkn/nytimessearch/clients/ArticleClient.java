@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.fadetoproductions.rvkn.nytimessearch.models.Article;
+import com.fadetoproductions.rvkn.nytimessearch.utils.Reachability;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -87,10 +88,10 @@ public class ArticleClient {
 
     public void search() {
         listener.onSearch();
-//        Reachability reach = new Reachability(context);
-//        if (!reach.checkAndHandleConnection()) {
-//            return;
-//        }
+        Reachability reach = new Reachability(context);
+        if (!reach.checkAndHandleConnection()) {
+            return;
+        }
 
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = getRequestParams();
