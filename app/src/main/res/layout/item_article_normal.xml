@@ -8,7 +8,7 @@
         android:layout_height="75dp"
         android:id="@+id/ivImage"
         android:scaleType="center"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/newspaper"
         />
 
     <TextView

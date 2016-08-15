@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import cz.msebera.android.httpclient.util.TextUtils;
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 /**
  * Created by rnewton on 8/8/16.
@@ -24,6 +25,7 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
     private static class ViewHolder {
         TextView tvTitle;
         ImageView imageView;
+        TextView tvSnippet;
     }
 
     public ArticleArrayAdapter(Context context, List<Article> articles) {
@@ -68,22 +70,32 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
             int type = getItemViewType(position);
             convertView = getInflatedLayoutForType(type);
 
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.ivImage);
+            if (!article.getThumbnailImage().isEmpty()) {
+                viewHolder.imageView = (ImageView) convertView.findViewById(R.id.ivImage);
+            }
             viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+//            viewHolder.tvSnippet = (TextView) convertView.findViewById(R.id.tvSnippet);
             convertView.setTag(viewHolder);
 
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.imageView.setImageResource(0);
-        viewHolder.tvTitle.setText(article.getHeadline());
-
-        String thumbnail = article.getThumbnailImage();
-        if (!TextUtils.isEmpty(thumbnail)) {
-            Picasso.with(getContext()).load(thumbnail).into(viewHolder.imageView);
+        if (!article.getThumbnailImage().isEmpty()) {
+            viewHolder.imageView.setImageResource(0);
         }
 
+        viewHolder.tvTitle.setText(article.getHeadline());
+//        viewHolder.tvSnippet.setText(article.getSnippet());
+        String thumbnail = article.getThumbnailImage();
+        if (!TextUtils.isEmpty(thumbnail)) {
+            Picasso.with(getContext())
+                    .load(thumbnail)
+                    .transform(new RoundedCornersTransformation(10, 10))
+                    .fit()
+                    .centerInside()
+                    .into(viewHolder.imageView);
+        }
         return convertView;
     }
 }
